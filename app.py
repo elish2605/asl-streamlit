@@ -64,27 +64,18 @@ MODEL_STATE_DICT_PATH = "asl_resnet_model.pt" # <--- VERIFIEZ CE NOM !
 
 
 # --- Charger le modèle à partir du State Dict (Mis en cache par Streamlit) ---
-@st.cache_resource # Cache le modèle
+@st.cache_resource
 def load_model_state_dict(model_state_dict_path, num_classes):
-    """Instancie le modèle et charge son state_dict."""
+    """Charge un modèle TorchScript sérialisé."""
     if not os.path.exists(model_state_dict_path):
-        # Message d'erreur spécifique pour le déploiement
-        st.error(f"Erreur : Le fichier state_dict du modèle n'a pas été trouvé : {model_state_dict_path}. ")
-        st.error("Assurez-vous que le fichier .pth a été placé dans le même répertoire que app.py et que le nom correspond.")
+        st.error(f"Erreur : Le fichier du modèle n'a pas été trouvé : {model_state_dict_path}")
         st.stop()
         return None
 
-    st.write(f"Chargement du modèle à partir du state_dict : {model_state_dict_path}")
+    st.write(f"Chargement du modèle TorchScript : {model_state_dict_path}")
     try:
-        # Instancier le modèle en premier
-        model = WNBModule(num_classes=num_classes)
-
-        # Charger uniquement l'état du modèle
-        # map_location='cpu' est important pour la compatibilité
-        state_dict = torch.load(model_state_dict_path, map_location=torch.device('cpu'))
-
-        # Charger le state dict dans l'instance du modèle
-        model.load_state_dict(state_dict)
+        # Charger le modèle compilé TorchScript
+        model = torch.jit.load(model_state_dict_path, map_location=torch.device('cpu'))
 
         model.eval()
 
@@ -97,9 +88,10 @@ def load_model_state_dict(model_state_dict_path, num_classes):
 
         return model
     except Exception as e:
-        st.error(f"Erreur lors du chargement du state_dict du modèle : {e}")
+        st.error(f"Erreur lors du chargement du modèle TorchScript : {e}")
         st.stop()
         return None
+
 
 # Charger le modèle au démarrage de l'application
 model = load_model_state_dict(MODEL_STATE_DICT_PATH, NUM_CLASSES_ASL)
