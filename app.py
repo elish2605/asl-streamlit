@@ -60,7 +60,7 @@ class WNBModule(pl.LightningModule):
 # --- Nom du fichier State Dict (MODIFIEZ CE NOM LORS DU DÉPLOIEMENT) ---
 # Ce nom de fichier DOIT CORRESPONDRE au nom du fichier .pth que vous avez téléchargé
 # et placé dans le même répertoire que ce fichier app.py pour le déploiement.
-MODEL_STATE_DICT_PATH = "/content/drive/MyDrive/ASL_Project_WNB/exported_models/asl_resnet_model.pt" # <--- VERIFIEZ CE NOM !
+MODEL_STATE_DICT_PATH = "asl_resnet_model.pt" # <--- VERIFIEZ CE NOM !
 
 
 # --- Charger le modèle à partir du State Dict (Mis en cache par Streamlit) ---
